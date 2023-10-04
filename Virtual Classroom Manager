@@ -1,0 +1,103 @@
+class Classroom:
+    def _init_(self, name):
+        self.name = name
+        self.students = []
+        self.assignments = []
+
+    def add_student(self, student):
+        self.students.append(student)
+
+    def schedule_assignment(self, assignment):
+        self.assignments.append(assignment)
+
+    def list_students(self):
+        return [student.name for student in self.students]
+
+    def list_assignments(self):
+        return [assignment.title for assignment in self.assignments]
+
+
+class Student:
+    def _init_(self, id, name):
+        self.id = id
+        self.name = name
+
+    def submit_assignment(self, assignment):
+        return f"Assignment submitted by Student {self.id} in {assignment.classroom.name}: {assignment.title}"
+
+
+class Assignment:
+    def _init_(self, classroom, title, details):
+        self.classroom = classroom
+        self.title = title
+        self.details = details
+
+
+class VirtualClassroomManager:
+    def _init_(self):
+        self.classrooms = {}
+        self.students = {}
+        self.assignments = {}
+
+    def add_classroom(self, name):
+        classroom = Classroom(name)
+        self.classrooms[name] = classroom
+        return f"Classroom {name} has been created."
+
+    def add_student(self, id, classroom_name):
+        if classroom_name not in self.classrooms:
+            return f"Classroom {classroom_name} does not exist."
+        student = Student(id, f"Student {id}")
+        classroom = self.classrooms[classroom_name]
+        classroom.add_student(student)
+        self.students[id] = student
+        return f"Student {id} has been enrolled in {classroom_name}"
+
+    def schedule_assignment(self, classroom_name, title, details):
+        if classroom_name not in self.classrooms:
+            return f"Classroom {classroom_name} does not exist."
+        classroom = self.classrooms[classroom_name]
+        assignment = Assignment(classroom, title, details)
+        classroom.schedule_assignment(assignment)
+        self.assignments[(classroom_name, title)] = assignment
+        return f"Assignment for {classroom_name} has been scheduled."
+
+    def submit_assignment(self, student_id, classroom_name, assignment_title):
+        if student_id not in self.students:
+            return f"Student {student_id} does not exist."
+        if (classroom_name, assignment_title) not in self.assignments:
+            return f"Assignment for {classroom_name} with title {assignment_title} does not exist."
+        student = self.students[student_id]
+        assignment = self.assignments[(classroom_name, assignment_title)]
+        return student.submit_assignment(assignment)
+
+
+if __name__ == "_main_":
+    manager = VirtualClassroomManager()
+
+    while True:
+        command = input("Enter a command (add_classroom, add_student, schedule_assignment, submit_assignment, quit): ")
+        
+        if command == "add_classroom":
+            classroom_name = input("Enter classroom name: ")
+            print(manager.add_classroom(classroom_name))
+        
+        elif command == "add_student":
+            student_id = input("Enter student ID: ")
+            classroom_name = input("Enter classroom name: ")
+            print(manager.add_student(student_id, classroom_name))
+        
+        elif command == "schedule_assignment":
+            classroom_name = input("Enter classroom name: ")
+            assignment_title = input("Enter assignment title: ")
+            assignment_details = input("Enter assignment details: ")
+            print(manager.schedule_assignment(classroom_name, assignment_title, assignment_details))
+        
+        elif command == "submit_assignment":
+            student_id = input("Enter student ID: ")
+            classroom_name = input("Enter classroom name: ")
+            assignment_title = input("Enter assignment title: ")
+            print(manager.submit_assignment(student_id, classroom_name, assignment_title))
+        
+        elif command == "quit":
+            break
