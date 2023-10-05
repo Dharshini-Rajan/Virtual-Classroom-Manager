@@ -1,0 +1,3 @@
+Problem Statement
+Imagine you are developing the backend for an EdTech platform that aims to host virtual classrooms. Your task is to create a terminal-based
+Virtual Classroom Manager that handles class scheduling, student attendance, and assignment submissions.
